@@ -22,11 +22,6 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stm32g0xx_it.h"
-#include "stm32g0xx.h"
-#include "stm32g0xx_ll_bus.h"
-#include "stm32g0xx_ll_rcc.h"
-#include "stm32g0xx_ll_system.h"
-#include "stm32g0xx_ll_utils.h"
 
 #include "ChirpGenerator.hpp"
 #include "HBridgePwm.hpp"
@@ -66,9 +61,7 @@ static void MX_TIM1_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-// Per-device (not per-boot) PRNG seed derived from the 96-bit factory
-// unique ID, so different boards don't all sweep through an identical
-// frequency sequence.
+// Each board repeats its own tone sequence after reset.
 std::uint32_t ReadSeedFromUniqueId()
 {
     const std::uint32_t* uid = reinterpret_cast<const std::uint32_t*>(UID_BASE);
@@ -130,7 +123,6 @@ int main(void)
     const uint32_t nowMs = GetTickMs();
     chirp.Update(nowMs);
 
-    // Blink with LED to see if it is running
     if ((nowMs - lastLedTick) >= 500U) {
       lastLedTick = nowMs;
       LL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);

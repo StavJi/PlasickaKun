@@ -1,29 +1,11 @@
 #include "HBridgePwm.hpp"
 #include "cfg.hpp"
 
+#include <algorithm>
 #include "stm32g0xx_ll_tim.h"
 
-namespace {
-
-std::uint32_t ComputeArr(std::uint32_t frequencyHz) {
-    if (frequencyHz < config::FREQUENCY_MIN_HZ) {
-        frequencyHz = config::FREQUENCY_MIN_HZ;
-    }
-
-    if (frequencyHz > config::FREQUENCY_MAX_HZ) {
-        frequencyHz = config::FREQUENCY_MAX_HZ;
-    }
-    // PSC = 0, so TIM1 counter clock equals config::kTim1ClockHz.
-    return (config::TIM1_CLOCK_HZ / frequencyHz) - 1U;
-}
-
-}  // namespace
-
-HBridgePwm::HBridgePwm(std::uint32_t frequencyHz) 
-    : currentFrequencyHz_{frequencyHz} {
-
-    // CubeMX configures GPIO, PWM mode, preload and dead time before this constructor.
-    ApplyFrequency(frequencyHz);
+HBridgePwm::HBridgePwm(std::uint32_t frequencyHz) {
+    SetFrequencyHz(frequencyHz);
     LL_TIM_GenerateEvent_UPDATE(TIM1);
 }
 
@@ -33,25 +15,21 @@ void HBridgePwm::Start(void) {
     LL_TIM_EnableCounter(TIM1);
 }
 
-void HBridgePwm::Stop() {
+void HBridgePwm::Stop(void) {
     LL_TIM_DisableCounter(TIM1);
     LL_TIM_DisableAllOutputs(TIM1);
     LL_TIM_CC_DisableChannel(TIM1, LL_TIM_CHANNEL_CH1 | LL_TIM_CHANNEL_CH1N);
 }
 
 void HBridgePwm::SetFrequencyHz(std::uint32_t frequencyHz) {
+    frequencyHz = std::clamp(frequencyHz, config::FREQUENCY_MIN_HZ, config::FREQUENCY_MAX_HZ);
     if (frequencyHz == currentFrequencyHz_) {
         return;
     }
-    ApplyFrequency(frequencyHz);
+
+    const std::uint32_t period = config::TIM1_CLOCK_HZ / frequencyHz;
+    // CubeMX enables ARR/CCR1 preload; writes take effect on an update event.
+    LL_TIM_SetAutoReload(TIM1, period - 1U);
+    LL_TIM_OC_SetCompareCH1(TIM1, period / 2U);
     currentFrequencyHz_ = frequencyHz;
 }
-
-void HBridgePwm::ApplyFrequency(std::uint32_t frequencyHz) {
-    const std::uint32_t arr = ComputeArr(frequencyHz);
-    // Both ARR and CCR1 are buffered (preload enabled above), so this pair
-    // of writes takes effect atomically on the next update event
-    LL_TIM_SetAutoReload(TIM1, arr);
-    LL_TIM_OC_SetCompareCH1(TIM1, (arr + 1U) / 2U);
-}
-
