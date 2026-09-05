@@ -2,8 +2,8 @@
 Firmware pro plašičku kun založený na STM32G031F4P6. Střídájí se náhodně tóny v rozsahu frekvencí (30 – 40) kHz a náhodnou dobou trvání v rozmezí (150 – 900) ms, bez pauz mezi tóny. Posloupnost tónu je odvozená z UID čipu. LED dioda bliká s periodou 500 ms a slouží k indikaci běhu firmwaru.
 
 ## Nastaveni
-- `Core/App/Inc/cfg.hpp`: rozsah frekvencí a délka tónu
-- `PlasickaKun.ioc`: hodiny, piny a inicializace TIM1.
+- `FW/Core/App/Inc/cfg.hpp`: rozsah frekvencí a délka tónu
+- `FW/PlasickaKun.ioc`: hodiny, piny a inicializace TIM1.
 - PA8: `PWM_HIGH` / TIM1_CH1; PA7: `PWM_LOW` / TIM1_CH1N.
 - TIM1: 64 MHz, prescaler 0, dead-time 3 us (DIV2, DTG 96).
 
@@ -11,14 +11,16 @@ Firmware pro plašičku kun založený na STM32G031F4P6. Střídájí se náhodn
 Milisekundový čítač aktualizuje `SysTick_Handler`.
 
 ## Build
-VS Code s STM32Cube toolchainem
+Ve VS Code otevři `PlasickaKun.code-workspace` nebo přímo složku `FW`.
+Konfigurace STM32Cube a debuggeru je v `FW/.vscode`.
 
 ```sh
+cd FW
 cmake --preset Debug
 cmake --build --preset Debug
 ```
 
-Výsledek: `build/Debug/PlasickaKun.elf` nebo `build/Release/PlasickaKun.elf`. Debugovaní ve VS Code použvívá konfiguraci STM32Cube a ST-Link.
+Výsledek: `FW/build/Debug/PlasickaKun.elf` nebo `FW/build/Release/PlasickaKun.elf`. Debugovaní ve VS Code použvívá konfiguraci STM32Cube a ST-Link.
 
 Při regeneraci CubeMX ponechat volbu Keep User Code. Aplikační kód v `main.c` a obsluze přerušení patří do bloku USER CODE. `main.c` se kvůli C++ aplikaci překládá jako C++; ovladače ST zůstávájí v C.
 
