@@ -4,21 +4,12 @@
 
 // Compile-time (constexpr) computation of the TIM1 BDTR.DTG dead-time byte.
 //
-// The STM32 advanced-control timer dead-time generator inserts a fixed gap
-// between an output (e.g. TIM1_CH1) going inactive and its complementary
-// output (TIM1_CH1N) going active, and vice versa -- exactly the "gap
-// between switching one diagonal off and the other diagonal on" needed to
-// avoid shoot-through in the H-bridge. The dead time is expressed in units
-// of tDTS (a division of the timer's input clock) and packed into an 8-bit
-// field with four different resolution/range trade-offs (see RM0444,
-// "TIMx_BDTR register", DTG[7:0] bit description):
-//
 //   DTG[7:5] = 0xx  ->  DT = DTG[7:0]        * 1  * tDTS   (0   ..  127 * tDTS)
 //   DTG[7:5] = 10x  ->  DT = (64 + DTG[5:0])  * 2  * tDTS   (128 ..  254 * tDTS)
 //   DTG[7:5] = 110  ->  DT = (32 + DTG[4:0])  * 8  * tDTS   (256 ..  504 * tDTS)
 //   DTG[7:5] = 111  ->  DT = (32 + DTG[4:0])  * 16 * tDTS   (512 .. 1008 * tDTS)
 //
-// This project fixes the dead time at compile time (a `constexpr`), per
+// This fixes the dead time at compile time (a `constexpr`), per
 // design choice: it is not meant to be re-tuned at runtime, only by
 // changing App/Inc/RepellerConfig.hpp and reflashing.
 namespace deadtime {
@@ -84,7 +75,7 @@ constexpr std::uint8_t ComputeDtg(double deadTimeSeconds, double timerClockHz, s
     }
 }
 
-// Returns the actual dead time (in seconds) a given DTG byte encodes --
+// Returns the actual dead time (in seconds) a given DTG byte encodes
 // useful for a `static_assert` sanity check against the requested value.
 constexpr double DtgToSeconds(std::uint8_t dtg, double timerClockHz, std::uint32_t ckd = 0)
 {

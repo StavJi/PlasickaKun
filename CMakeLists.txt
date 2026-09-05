@@ -51,15 +51,15 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
-    App/Src/HBridgePwm.cpp
-    App/Src/ChirpGenerator.cpp
+    Core/App/Src/HBridgePwm.cpp
+    Core/App/Src/ChirpGenerator.cpp
 )
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
     Core/Inc
-    App/Inc
+    Core/App/Inc
 )
 
 # Add project symbols (macros)
