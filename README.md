@@ -25,7 +25,7 @@ Výsledek: `FW/build/Debug/PlasickaKun.elf` nebo `FW/build/Release/PlasickaKun.e
 Při regeneraci CubeMX ponechat volbu Keep User Code. Aplikační kód v `main.c` a obsluze přerušení patří do bloku USER CODE. `main.c` se kvůli C++ aplikaci překládá jako C++; ovladače ST zůstávájí v C.
 
 # HW
- **Pozor nejedná se o ověřenou verzi**.
+ **Pozor nejedná se o ověřenou verzi HW**.
 Schéma zapojení je ve složce `HW/Schematic.pdf`. S tím rozdílem, že můj prototyp je ze součástek co dům dal. Pro 3V3 napájení mám použité LDO, nepoužívám programovací konektor a místo tranzistorů BC817 v H-můstku používám BC639.
 Jako výstupní piezo měniče jsou použité 2 kusy Kemo L010 v sérii. Napájecí napětí je 12 VDC.
 
