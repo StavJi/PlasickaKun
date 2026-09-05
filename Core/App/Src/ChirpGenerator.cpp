@@ -11,18 +11,15 @@ ChirpGenerator::ChirpGenerator(HBridgePwm& pwm, std::uint32_t seed)
       segmentEndHz_(config::kMinFrequencyHz),
       lastUpdateMs_(0U),
       silent_(false),
-      pwmRunning_(false)
-{
+      pwmRunning_(false) {
 }
 
-void ChirpGenerator::Begin(std::uint32_t nowMs)
-{
+void ChirpGenerator::Begin(std::uint32_t nowMs) {
     lastUpdateMs_ = nowMs;
     StartNewSegment(nowMs);
 }
 
-void ChirpGenerator::StartNewSegment(std::uint32_t nowMs)
-{
+void ChirpGenerator::StartNewSegment(std::uint32_t nowMs) {
     const bool haveSilenceGap = config::kMaxSilenceMs > 0U;
     silent_ = haveSilenceGap && (rng_.Range(0U, 1U) == 0U);
 
@@ -38,8 +35,7 @@ void ChirpGenerator::StartNewSegment(std::uint32_t nowMs)
     segmentEndHz_ = rng_.Range(config::kMinFrequencyHz, config::kMaxFrequencyHz);
 }
 
-std::uint32_t ChirpGenerator::CurrentFrequencyHz(std::uint32_t nowMs) const
-{
+std::uint32_t ChirpGenerator::CurrentFrequencyHz(std::uint32_t nowMs) const {
     const std::uint32_t elapsed = nowMs - segmentStartMs_;  // wraps correctly even at uint32 rollover
     if (elapsed >= segmentDurationMs_ || segmentDurationMs_ == 0U) {
         return segmentEndHz_;
