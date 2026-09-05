@@ -55,11 +55,8 @@ static_assert(deadtime::DtgToSeconds(kDeadTimeDtg, static_cast<double>(kTim1Cloc
 // With PSC = 0 (no prescaler) TIM1's 16-bit ARR limits how *low* the
 // frequency can go (ARR = kTim1ClockHz / f - 1 must fit in 16 bits), and
 // practical dead-time-to-period ratio limits how *high* it should go.
-// Tune these to whatever transducer you actually drive; the placeholder
-// range below spans the upper audible band into low ultrasound, typical
-// for piezo/horn-driven pest repellers -- it is NOT tied to any specific
-// transducer's resonance and should be adjusted for yours.
-inline constexpr std::uint32_t kMinFrequencyHz = 2'000U;   // 2 kHz
+// Nominal output range annotated in the reference repeller schematic.
+inline constexpr std::uint32_t kMinFrequencyHz = 30'000U;  // 30 kHz
 inline constexpr std::uint32_t kMaxFrequencyHz = 40'000U;  // 40 kHz
 
 static_assert(kMinFrequencyHz > 0U, "Frequency must be positive.");
@@ -68,10 +65,8 @@ static_assert(kTim1ClockHz / kMinFrequencyHz - 1U <= 0xFFFFU,
               "kMinFrequencyHz is too low for a 16-bit ARR at this timer clock "
               "-- raise kMinFrequencyHz or add a TIM1 prescaler.");
 
-// Each "chirp" segment sweeps linearly from one random frequency to
-// another over a random duration, then a new segment starts (optionally
-// after a random silent gap) -- this is what makes the tone "rozmitany"
-// (swept) instead of a fixed, easily-learned tone.
+// Hold a random frequency for a random duration, then select a new tone.
+// Durations are a software choice, not measured from the reference circuit.
 inline constexpr std::uint32_t kMinSegmentDurationMs = 150U;
 inline constexpr std::uint32_t kMaxSegmentDurationMs = 900U;
 

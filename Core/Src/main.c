@@ -116,7 +116,6 @@ int main(void)
   HBridgePwm hbridge(config::kMinFrequencyHz);
   ChirpGenerator chirp(hbridge, ReadSeedFromUniqueId());
 
-  hbridge.Start();
   chirp.Begin(GetTickMs());
   uint32_t lastLedTick = GetTickMs();
   /* USER CODE END 2 */

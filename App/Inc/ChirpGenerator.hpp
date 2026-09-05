@@ -7,7 +7,7 @@
 
 // This class is non-blocking: call Update(nowMs) periodically (e.g. once
 // per millisecond from the main loop, driven off the SysTick-based
-// millisecond counter) and it will advance the sweep and push new
+// millisecond counter) and it will advance the random tone sequence and push new
 // frequencies to the HBridgePwm as needed. It never blocks or delays.
 class ChirpGenerator {
 public:
@@ -17,14 +17,13 @@ public:
 
 private:
     void StartNewSegment(std::uint32_t nowMs);
-    std::uint32_t CurrentFrequencyHz(std::uint32_t nowMs) const;
+    std::uint32_t CurrentFrequencyHz() const;
 
     HBridgePwm& pwm_;
     Xorshift32 rng_;
 
     std::uint32_t segmentStartMs_;
     std::uint32_t segmentDurationMs_;
-    std::uint32_t segmentStartHz_;
     std::uint32_t segmentEndHz_;
     std::uint32_t lastUpdateMs_;
     bool silent_;
