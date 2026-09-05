@@ -129,8 +129,9 @@ int main(void)
     /* USER CODE BEGIN 3 */
     const uint32_t nowMs = GetTickMs();
     chirp.Update(nowMs);
-    if ((nowMs - lastLedTick) >= 500U)
-    {
+
+    // Blink with LED to see if it is running
+    if ((nowMs - lastLedTick) >= 500U) {
       lastLedTick = nowMs;
       LL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
     }
