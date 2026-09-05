@@ -21,6 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "stm32g0xx_it.h"
 #include "stm32g0xx.h"
 #include "stm32g0xx_ll_bus.h"
 #include "stm32g0xx_ll_rcc.h"
@@ -102,6 +103,8 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
+  // LL_Init1msTick configures the counter; enable its interrupt explicitly.
+  LL_SYSTICK_EnableIT();
 
   /* USER CODE END SysInit */
 
@@ -109,13 +112,13 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
-  // HAL_Init and HAL_RCC_ClockConfig configure the 1 ms SysTick time base.
 
   HBridgePwm hbridge(config::kMinFrequencyHz);
   ChirpGenerator chirp(hbridge, ReadSeedFromUniqueId());
 
   hbridge.Start();
-  chirp.Begin(HAL_GetTick());
+  chirp.Begin(GetTickMs());
+  uint32_t lastLedTick = GetTickMs();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -125,6 +128,13 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    const uint32_t nowMs = GetTickMs();
+    chirp.Update(nowMs);
+    if ((nowMs - lastLedTick) >= 500U)
+    {
+      lastLedTick = nowMs;
+      LL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+    }
   }
   /* USER CODE END 3 */
 }
@@ -242,21 +252,21 @@ static void MX_TIM1_Init(void)
   PA7   ------> TIM1_CH1N
   PA8   ------> TIM1_CH1
   */
-  GPIO_InitStruct.Pin = NPWM_Pin;
+  GPIO_InitStruct.Pin = PWM_LOW_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
-  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_HIGH;
   GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   GPIO_InitStruct.Alternate = LL_GPIO_AF_2;
-  LL_GPIO_Init(NPWM_GPIO_Port, &GPIO_InitStruct);
+  LL_GPIO_Init(PWM_LOW_GPIO_Port, &GPIO_InitStruct);
 
-  GPIO_InitStruct.Pin = PWM_Pin;
+  GPIO_InitStruct.Pin = PWM_HIGH_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
-  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_HIGH;
   GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   GPIO_InitStruct.Alternate = LL_GPIO_AF_2;
-  LL_GPIO_Init(PWM_GPIO_Port, &GPIO_InitStruct);
+  LL_GPIO_Init(PWM_HIGH_GPIO_Port, &GPIO_InitStruct);
 
 }
 

@@ -15,7 +15,7 @@ namespace config {
 // Clocks
 // ---------------------------------------------------------------------
 // SYSCLK = HCLK = PCLK = 64 MHz (HSI16 -> PLL x8 /2, see SystemClock_Config
-// in main.cpp). TIM1 hangs off APB2/PCLK with no additional multiplier
+// in CubeMX-generated main.c). TIM1 uses PCLK with no additional multiplier
 // applied when the APB prescaler is 1, so TIM1's counter clock (CK_INT) is
 // also 64 MHz.
 inline constexpr std::uint32_t kSysClockHz = 64'000'000U;
@@ -32,6 +32,8 @@ inline constexpr std::uint32_t kTim1ClockHz = kSysClockHz;
 // is a reasonable starting point for small-signal MOSFETs with a decent
 // gate driver, but re-check against your actual switches before relying
 // on it.
+// Reference values only: configure TIM1 Dead Time in PlasickaKun.ioc.
+// CubeMX currently generates DTG = 32 at 64 MHz, i.e. 500 ns.
 inline constexpr double kDeadTimeSeconds = 500.0e-9;  // 500 ns
 
 inline constexpr std::uint8_t kDeadTimeDtg =

@@ -36,10 +36,8 @@
 // on that specific package were not independently re-verified here.
 class HBridgePwm {
 public:
-    // `frequencyHz` is the initial output frequency; see setFrequencyHz()
-    // to change it later. The dead time is NOT a constructor parameter --
-    // it is fixed at compile time via config::kDeadTimeDtg (see
-    // RepellerConfig.hpp), per this project's design choice.
+    // Call MX_TIM1_Init() first. CubeMX owns GPIO, PWM mode and dead time.
+    // The constructor sets only the initial frequency and loads the preloads.
     explicit HBridgePwm(std::uint32_t frequencyHz);
 
     HBridgePwm(const HBridgePwm&) = delete;

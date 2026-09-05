@@ -41,6 +41,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
+static volatile uint32_t tickMs = 0U;
 
 /* USER CODE END PV */
 
@@ -51,6 +52,10 @@
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+uint32_t GetTickMs(void)
+{
+  return tickMs;
+}
 
 /* USER CODE END 0 */
 
@@ -125,6 +130,7 @@ void PendSV_Handler(void)
 void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
+  ++tickMs;
 
   /* USER CODE END SysTick_IRQn 0 */
 

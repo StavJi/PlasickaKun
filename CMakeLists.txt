@@ -40,14 +40,8 @@ add_executable(${CMAKE_PROJECT_NAME})
 # Add STM32CubeMX generated sources
 add_subdirectory(cmake/stm32cubemx)
 
-# Full LL initialization APIs used by HBridgePwm (kept outside generated CMake).
-target_compile_definitions(stm32cubemx INTERFACE USE_FULL_LL_DRIVER)
 # The linker places the interrupt vector table at FLASH_BASE (0x08000000).
 target_compile_definitions(STM32_Drivers PRIVATE USER_VECT_TAB_ADDRESS)
-target_sources(STM32_Drivers PRIVATE
-    Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_ll_gpio.c
-    Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_ll_tim.c
-)
 
 # Link directories setup
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE

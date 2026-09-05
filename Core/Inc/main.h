@@ -72,10 +72,10 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define LED_Pin LL_GPIO_PIN_3
 #define LED_GPIO_Port GPIOA
-#define NPWM_Pin LL_GPIO_PIN_7
-#define NPWM_GPIO_Port GPIOA
-#define PWM_Pin LL_GPIO_PIN_8
-#define PWM_GPIO_Port GPIOA
+#define PWM_LOW_Pin LL_GPIO_PIN_7
+#define PWM_LOW_GPIO_Port GPIOA
+#define PWM_HIGH_Pin LL_GPIO_PIN_8
+#define PWM_HIGH_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
 
